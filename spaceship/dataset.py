@@ -1,6 +1,7 @@
 import pandas as pd
 import torch
 from config import Config
+from dvc.api import DVCFileSystem
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
@@ -31,8 +32,12 @@ class SpaceshipTitanicDataset(Dataset):
 
 
 def load_data(is_train=True):
+    url = "https://github.com/elineii/spaceship-titanic.git"
+    fs = DVCFileSystem(url, rev="main")
+
     if is_train:
         # Download and preprocess train data
+        fs.get_file("/data/train.csv", "../data/train.csv")
         df_train = pd.read_csv("../data/train.csv")
         target_train = df_train["Transported"].map({True: 1, False: 0}).values
         df_train = df_train[
@@ -111,12 +116,19 @@ def load_data(is_train=True):
 
     else:
         # Download and preprocess train data
+        fs.get_file("/data/test.csv", "../data/test.csv")
         df_test = pd.read_csv("../data/test.csv")
         indexes = df_test["PassengerId"]
         df_test = df_test[
             Config.categorical_columns + Config.continious_columns + Config.bool_columns
         ]
-        column_transformer = load("preprocessing_pipeline.skops", trusted=["numpy.dtype"])
+        fs.get_file(
+            "/models/preprocessing_pipeline.skops",
+            "../models/preprocessing_pipeline.skops",
+        )
+        column_transformer = load(
+            "../models/preprocessing_pipeline.skops", trusted=["numpy.dtype"]
+        )
 
         df_test_preprocessed = column_transformer.transform(df_test)
 

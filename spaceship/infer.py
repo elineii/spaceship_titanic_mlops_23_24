@@ -2,13 +2,18 @@ import numpy as np
 import pandas as pd
 from config import Config
 from dataset import load_data
+from dvc.api import DVCFileSystem
 from model import NeuralNetwork
 from safetensors.torch import load_model
 from torch.utils.data import DataLoader
 
 
 def main():
-    # Load and preprocess train data
+    url = "https://github.com/elineii/spaceship-titanic.git"
+    fs = DVCFileSystem(url, rev="main")
+    fs.get_file("/models/model.safetensor", "../models/model.safetensor")
+
+    # Load and preprocess test data
     dataset_test, indexes = load_data(is_train=False)
     loader_test = DataLoader(
         dataset_test,

@@ -22,6 +22,7 @@ safetensors = "^0.4.1"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
+dvc = "^3.38.1"
 
 [tool.black]
 line-length = 90

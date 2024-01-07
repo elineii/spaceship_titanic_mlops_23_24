@@ -1,16 +1,13 @@
 import pandas as pd
-
+import torch
+from config import Config
+from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from skops.io import dump, load
-
 from torch.utils.data import Dataset
-import torch
-
-from config import Config
 
 
 class SpaceshipTitanicDataset(Dataset):
@@ -65,7 +62,10 @@ def load_data(is_train=True):
 
         categorical_pipeline = Pipeline(
             [
-                ("fill_na_transformer", SimpleImputer(strategy="constant", fill_value="unknown")),
+                (
+                    "fill_na_transformer",
+                    SimpleImputer(strategy="constant", fill_value="unknown"),
+                ),
                 ("preprocess_transformer", OneHotEncoder()),
             ]
         )
@@ -103,7 +103,9 @@ def load_data(is_train=True):
 
         X_val_preprocessed = column_transformer.transform(X_val)
 
-        dataset_train = SpaceshipTitanicDataset(X_train_preprocessed, y_train, is_test=False)
+        dataset_train = SpaceshipTitanicDataset(
+            X_train_preprocessed, y_train, is_test=False
+        )
         dataset_val = SpaceshipTitanicDataset(X_val_preprocessed, y_val, is_test=False)
         return dataset_train, dataset_val
 

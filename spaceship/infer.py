@@ -1,12 +1,10 @@
-from torch.utils.data import DataLoader
 import numpy as np
 import pandas as pd
-
+from config import Config
 from dataset import load_data
 from model import NeuralNetwork
-from config import Config
-
 from safetensors.torch import load_model
+from torch.utils.data import DataLoader
 
 
 def main():
@@ -32,7 +30,9 @@ def main():
     preds = np.hstack(preds)
 
     # Load predictions
-    res_df = pd.DataFrame({"PassengerId": indexes.values, "Transported": preds.astype("bool")})
+    res_df = pd.DataFrame(
+        {"PassengerId": indexes.values, "Transported": preds.astype("bool")}
+    )
     res_df.to_csv("res.csv", index=False)
 
 

@@ -1,9 +1,7 @@
-from typing import Any
 import torch
 import torch.nn as nn
-from lightning import LightningModule
-
 from config import Config
+from lightning import LightningModule
 
 
 def binary_acc(y_pred, y_test):
@@ -37,23 +35,22 @@ class NeuralNetwork(LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=Config.lr)
         return optimizer
-    
+
     def step(self, batch, batch_idx):
         x, y = batch
         pred = self.forward(x)
         loss = self.loss_fn(pred, y.long())
         acc = binary_acc(pred.argmax(axis=1), y)
         return loss, acc
-    
+
     def training_step(self, batch, batch_idx):
         loss, acc = self.step(batch, batch_idx)
-        self.log('train_loss', loss, prog_bar=True)
-        self.log('train_acc', acc, prog_bar=True)
+        self.log("train_loss", loss, prog_bar=True)
+        self.log("train_acc", acc, prog_bar=True)
         return loss
-    
+
     def validation_step(self, batch, batch_idx):
         loss, acc = self.step(batch, batch_idx)
-        self.log('val_loss', loss, prog_bar=True)
-        self.log('val_acc', acc, prog_bar=True)
+        self.log("val_loss", loss, prog_bar=True)
+        self.log("val_acc", acc, prog_bar=True)
         return loss
-    

@@ -17,6 +17,13 @@ class Config:
     train_loss_fn = nn.BCEWithLogitsLoss()
     valid_loss_fn = nn.BCEWithLogitsLoss()
     target_name = "Transported"
-    continious_columns = ["Age", "RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck"]
+    continious_columns = [
+        "Age",
+        "RoomService",
+        "FoodCourt",
+        "ShoppingMall",
+        "Spa",
+        "VRDeck",
+    ]
     categorical_columns = ["HomePlanet", "Destination"]
     bool_columns = ["CryoSleep", "VIP"]

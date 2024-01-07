@@ -1,0 +1,5 @@
+outs:
+- md5: 9dae703c11b7eb7059258f42dc45d08c
+  size: 194535
+  hash: md5
+  path: preprocessing_pipeline.skops

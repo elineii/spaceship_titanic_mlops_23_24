@@ -104,7 +104,7 @@ def load_data(is_train=True):
         )
 
         X_train_preprocessed = column_transformer.fit_transform(X_train)
-        dump(column_transformer, "preprocessing_pipeline.skops")
+        dump(column_transformer, "../models/preprocessing_pipeline.skops")
 
         X_val_preprocessed = column_transformer.transform(X_val)
 

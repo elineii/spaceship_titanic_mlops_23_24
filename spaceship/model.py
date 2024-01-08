@@ -15,13 +15,13 @@ class NeuralNetwork(LightningModule):
         super(NeuralNetwork, self).__init__()
         # Loss function
         self.loss_fn = nn.CrossEntropyLoss()
+
         # Model Architecture
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.output = nn.Linear(hidden_size, num_classes)
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(p_droput)
-        # self.sig = nn.Sigmoid()
 
     def forward(self, x):
         x = self.relu(self.fc1(x))
@@ -29,7 +29,6 @@ class NeuralNetwork(LightningModule):
         x = self.relu(self.fc2(x))
         x = self.dropout(x)
         x = self.output(x)
-        # x = self.sig(self.output(x))
         return x
 
     def configure_optimizers(self):

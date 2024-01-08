@@ -17,6 +17,7 @@ class Config:
     train_loss_fn = nn.BCEWithLogitsLoss()
     valid_loss_fn = nn.BCEWithLogitsLoss()
     target_name = "Transported"
+    mlflow_uri = "http://127.0.0.1:5000"
     continious_columns = [
         "Age",
         "RoomService",

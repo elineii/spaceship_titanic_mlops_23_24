@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from config import Config
 from lightning import LightningModule
 
 
@@ -11,8 +10,10 @@ def binary_acc(y_pred, y_test):
 
 
 class NeuralNetwork(LightningModule):
-    def __init__(self, input_size, hidden_size, num_classes=2, p_droput=0.1):
+    def __init__(self, input_size, hidden_size, num_classes=2, p_dropout=0.1, lr=1e-4):
         super(NeuralNetwork, self).__init__()
+        self.lr = lr
+
         # Loss function
         self.loss_fn = nn.CrossEntropyLoss()
 
@@ -21,7 +22,7 @@ class NeuralNetwork(LightningModule):
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.output = nn.Linear(hidden_size, num_classes)
         self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(p_droput)
+        self.dropout = nn.Dropout(p_dropout)
 
     def forward(self, x):
         x = self.relu(self.fc1(x))
@@ -32,7 +33,7 @@ class NeuralNetwork(LightningModule):
         return x
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=Config.lr)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         return optimizer
 
     def step(self, batch, batch_idx):

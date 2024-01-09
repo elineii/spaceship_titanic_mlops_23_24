@@ -1,3 +1,5 @@
+import logging
+
 import pandas as pd
 import torch
 from dvc.api import DVCFileSystem
@@ -8,6 +10,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from skops.io import dump, load
 from torch.utils.data import Dataset
+
+
+logger = logging.getLogger(__name__)
 
 
 class SpaceshipTitanicDataset(Dataset):
@@ -49,6 +54,7 @@ def load_data(
     fs = DVCFileSystem(github_url, rev="main")
 
     if is_train:
+        logger.info("Start loading train data")
         # Download and preprocess train data
         fs.get_file(dvc_train_csv_path, local_train_csv_path)
         df_train = pd.read_csv(local_train_csv_path)
@@ -123,10 +129,12 @@ def load_data(
             X_train_preprocessed, y_train, is_test=False
         )
         dataset_val = SpaceshipTitanicDataset(X_val_preprocessed, y_val, is_test=False)
+        logger.info("Train data successfully loaded")
         return dataset_train, dataset_val
 
     else:
-        # Download and preprocess train data
+        # Download and preprocess test data
+        logger.info("Start loading test data")
         fs.get_file(dvc_test_csv_path, local_test_csv_path)
         df_test = pd.read_csv(local_test_csv_path)
         indexes = df_test["PassengerId"]
@@ -137,4 +145,5 @@ def load_data(
         df_test_preprocessed = column_transformer.transform(df_test)
 
         dataset_test = SpaceshipTitanicDataset(df_test_preprocessed, is_test=True)
+        logger.info("Test data successfully loaded")
         return dataset_test, indexes

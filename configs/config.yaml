@@ -1,6 +1,7 @@
 general:
   random_state: 42
   github_url: https://github.com/elineii/spaceship-titanic.git
+  result_path: submissions/res.csv
 
 data:
   continious_inputer_strategy: "median"
@@ -24,11 +25,12 @@ data:
   local_train_csv_path: data/train.csv
   dvc_test_csv_path: /data/test.csv
   local_test_csv_path: data/test.csv
-  dvc_prerpocessor_path: /models/preprocessing_pipeline.skops
+  dvc_preprocessor_path: /models/preprocessing_pipeline.skops
   local_preprocessor_path: models/preprocessing_pipeline.skops
 
 model:
   lr: 1e-2
+  p_dropout: 0.1
   hidden_size: 32
   max_epochs: 10
   dvc_model_path: /models/model.safetensor

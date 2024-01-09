@@ -1,6 +1,5 @@
 import pandas as pd
 import torch
-from config import Config
 from dvc.api import DVCFileSystem
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
@@ -31,25 +30,37 @@ class SpaceshipTitanicDataset(Dataset):
         return len(self.features)
 
 
-def load_data(is_train=True):
-    url = "https://github.com/elineii/spaceship-titanic.git"
-    fs = DVCFileSystem(url, rev="main")
+def load_data(
+    github_url,
+    categorical_columns,
+    continious_columns,
+    bool_columns,
+    local_preprocessor_path,
+    dvc_train_csv_path=None,
+    local_train_csv_path=None,
+    dvc_test_csv_path=None,
+    local_test_csv_path=None,
+    dvc_preprocessor_path=None,
+    val_size=None,
+    random_state=None,
+    continious_inputer_strategy=None,
+    is_train=True,
+):
+    fs = DVCFileSystem(github_url, rev="main")
 
     if is_train:
         # Download and preprocess train data
-        fs.get_file("/data/train.csv", "../data/train.csv")
-        df_train = pd.read_csv("../data/train.csv")
+        fs.get_file(dvc_train_csv_path, local_train_csv_path)
+        df_train = pd.read_csv(local_train_csv_path)
         target_train = df_train["Transported"].map({True: 1, False: 0}).values
-        df_train = df_train[
-            Config.categorical_columns + Config.continious_columns + Config.bool_columns
-        ]
+        df_train = df_train[categorical_columns + continious_columns + bool_columns]
 
         # Train_val_split
         X_train, X_val, y_train, y_val = train_test_split(
             df_train,
             target_train,
-            test_size=Config.val_size,
-            random_state=Config.random_state,
+            test_size=val_size,
+            random_state=random_state,
         )
 
         # Fit and apply Pipeline to preprocess the train data
@@ -59,7 +70,7 @@ def load_data(is_train=True):
             [
                 (
                     "fill_na_transformer",
-                    SimpleImputer(strategy=Config.continious_inputer_strategy),
+                    SimpleImputer(strategy=continious_inputer_strategy),
                 ),
                 ("preprocess_transformer", StandardScaler()),
             ]
@@ -87,24 +98,24 @@ def load_data(is_train=True):
                 (
                     "preprocess_categorical",
                     categorical_pipeline,
-                    Config.categorical_columns,
+                    categorical_columns,
                 ),
                 (
                     "preprocess_continious",
                     continious_pipeline,
-                    Config.continious_columns,
+                    continious_columns,
                 ),
                 (
                     "preprocess_bool",
                     bool_pipeline,
-                    Config.bool_columns,
+                    bool_columns,
                 ),
             ],
             remainder="drop",
         )
 
         X_train_preprocessed = column_transformer.fit_transform(X_train)
-        dump(column_transformer, "../models/preprocessing_pipeline.skops")
+        dump(column_transformer, local_preprocessor_path)
 
         X_val_preprocessed = column_transformer.transform(X_val)
 
@@ -116,19 +127,12 @@ def load_data(is_train=True):
 
     else:
         # Download and preprocess train data
-        fs.get_file("/data/test.csv", "../data/test.csv")
-        df_test = pd.read_csv("../data/test.csv")
+        fs.get_file(dvc_test_csv_path, local_test_csv_path)
+        df_test = pd.read_csv(local_test_csv_path)
         indexes = df_test["PassengerId"]
-        df_test = df_test[
-            Config.categorical_columns + Config.continious_columns + Config.bool_columns
-        ]
-        fs.get_file(
-            "/models/preprocessing_pipeline.skops",
-            "../models/preprocessing_pipeline.skops",
-        )
-        column_transformer = load(
-            "../models/preprocessing_pipeline.skops", trusted=["numpy.dtype"]
-        )
+        df_test = df_test[categorical_columns + continious_columns + bool_columns]
+        fs.get_file(dvc_preprocessor_path, local_preprocessor_path)
+        column_transformer = load(local_preprocessor_path, trusted=["numpy.dtype"])
 
         df_test_preprocessed = column_transformer.transform(df_test)
 

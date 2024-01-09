@@ -1,0 +1,39 @@
+general:
+  random_state: 42
+  github_url: https://github.com/elineii/spaceship-titanic.git
+
+data:
+  continious_inputer_strategy: "median"
+  val_size: 0.1
+  train_bs: 32
+  valid_bs: 64
+  continious_columns:
+    - Age
+    - RoomService
+    - FoodCourt
+    - ShoppingMall
+    - Spa
+    - VRDeck
+  categorical_columns:
+    - HomePlanet
+    - Destination
+  bool_columns:
+    - CryoSleep
+    - VIP
+  dvc_train_csv_path: /data/train.csv
+  local_train_csv_path: data/train.csv
+  dvc_test_csv_path: /data/test.csv
+  local_test_csv_path: data/test.csv
+  dvc_prerpocessor_path: /models/preprocessing_pipeline.skops
+  local_preprocessor_path: models/preprocessing_pipeline.skops
+
+model:
+  lr: 1e-2
+  hidden_size: 32
+  max_epochs: 10
+  dvc_model_path: /models/model.safetensor
+  local_model_path: models/model.safetensor
+
+logging:
+  mlflow_uri: http://127.0.0.1:5000
+  experiment_name: spaceship

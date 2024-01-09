@@ -39,6 +39,26 @@ and Data-Intensive Systems".
 
 ## Initial configuration
 
-## Experimants reproduction
+Tested for Python=3.11
+
+```
+conda create --name <virtual_name>
+pip install poetry
+poetry config virtualenvs.create false
+poetry install
+```
+
+## Experiments reproduction
+
+```
+mlflow ui
+python train.py
+python infer.py
+```
 
 ## General scheme
+
+Missing value preprocessing, one-hot-encoding for categorical features and
+standardscaler for numeric features.
+
+Simple MLP model over CrossEntropyLoss() with dropout and optimizer Adam.

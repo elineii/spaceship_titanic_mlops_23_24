@@ -6,9 +6,10 @@ import lightning as L
 from lightning.pytorch.loggers import MLFlowLogger
 from omegaconf import DictConfig
 from safetensors.torch import save_model
+from torch.utils.data import DataLoader
+
 from spaceship.dataset import load_data
 from spaceship.model import NeuralNetwork
-from torch.utils.data import DataLoader
 
 
 CURRENT_DIR = pathlib.Path(__file__).parent

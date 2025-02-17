@@ -7,9 +7,10 @@ import pandas as pd
 from dvc.api import DVCFileSystem
 from omegaconf import DictConfig
 from safetensors.torch import load_model
+from torch.utils.data import DataLoader
+
 from spaceship.dataset import load_data
 from spaceship.model import NeuralNetwork
-from torch.utils.data import DataLoader
 
 
 CURRENT_DIR = pathlib.Path(__file__).parent
